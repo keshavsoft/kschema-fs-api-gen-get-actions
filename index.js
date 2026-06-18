@@ -6,13 +6,13 @@ const load = async (cmd) => {
     return module.default; // Returns a function
 };
 
-const showAll = async ({ toPath, showLog, toConfigPath, inTargetPath }) => {
+const showAll = async ({ toPath, showLog, inTargetPath }) => {
     const commandToSend = "insertGenPk";
 
     const commandFunction = await load(commandToSend);
     // console.log("  ...args :", args);
     await commandFunction({
-        toPath, cmd: commandToSend, toConfigPath, inTargetPath
+        toPath, cmd: commandToSend, inTargetPath
     });
 };
 
