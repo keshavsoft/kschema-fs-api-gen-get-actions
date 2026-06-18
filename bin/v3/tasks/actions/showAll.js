@@ -1,7 +1,7 @@
 import path from "path";
 
 import generateRest from "kschema-fs-api-gen-rest";
-import fixEndpointsJs from "express-fix-endpoints-js";
+import fixEndpointsJs from "express-fix-endpoints-get-js";
 
 import { locateSource } from "./ShowAll/steps/locateSource.js";
 import { locateDestination } from "./ShowAll/steps/locateDestination.js";
@@ -13,7 +13,7 @@ import resolveFolderName from "./ShowAll/steps/resolveFolderName.js";
 import actions from "./ShowAll/actions.json" with { type: "json" };
 
 const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreate = true,
-    toConfigPath, inTargetPath, inGenerateRest = false
+    toConfigPath, inTargetPath, inGenerateRest = false, inFolderName
 }) => {
 
     const matched = actions;
@@ -44,7 +44,7 @@ const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreat
     if (createFolderResponse.KTF) {
         const fromEndPointsJs = await fixEndpointsJs({
             endPointsJsPath: path.join(localToPath, "end-points.js"),
-            inActionName: cmd
+            inActionName: cmd, inFolderName
         });
 
         if (inGenerateRest) {

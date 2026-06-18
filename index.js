@@ -12,7 +12,8 @@ const showAll = async ({ toPath, showLog, inTargetPath }) => {
     const commandFunction = await load(commandToSend);
     // console.log("  ...args :", args);
     await commandFunction({
-        toPath, cmd: commandToSend, inTargetPath
+        toPath, cmd: commandToSend, inTargetPath,
+        inFolderName: commandToSend
     });
 };
 
