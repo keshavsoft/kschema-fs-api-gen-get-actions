@@ -1,9 +1,13 @@
 import getData from "./getData.js";
 
-const startFunc = async ({ inTablePath }) => {
+const startFunc = async ({ inPk, inTablePath }) => {
     const dataAsArray = await getData({ inTablePath });
 
-    return await dataAsArray;
+    const findRow = dataAsArray.find(element => {
+        return element.pk === inPk;
+    });
+
+    return await findRow;
 };
 
 export { startFunc };
