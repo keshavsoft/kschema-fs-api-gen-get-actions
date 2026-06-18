@@ -13,7 +13,7 @@ import resolveFolderName from "./ShowAll/steps/resolveFolderName.js";
 import actions from "./ShowAll/actions.json" with { type: "json" };
 
 const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreate = true,
-    toConfigPath, inTargetPath
+    toConfigPath, inTargetPath, inGenerateRest = false
 }) => {
 
     const matched = actions;
@@ -47,10 +47,12 @@ const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreat
             inActionName: cmd
         });
 
-        generateRest({
-            toConfigPath, inTargetPath,
-            toPath: path.join(localToPath, resolvedFolderName),
-        });
+        if (inGenerateRest) {
+            generateRest({
+                toConfigPath, inTargetPath,
+                toPath: path.join(localToPath, resolvedFolderName),
+            });
+        };
     };
 
     if (isAnnounce) announce({ inResolvedFolderName: resolvedFolderName });

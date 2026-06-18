@@ -7,7 +7,7 @@ const load = async (cmd) => {
 };
 
 const showAll = async ({ toPath, showLog, inTargetPath }) => {
-    const commandToSend = "insertGenPk";
+    const commandToSend = "showAll";
 
     const commandFunction = await load(commandToSend);
     // console.log("  ...args :", args);
