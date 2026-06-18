@@ -17,14 +17,14 @@ const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
     });
 };
 
-const find = async ({ toPath, showLog, inTargetPath }) => {
+const find = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
     const commandToSend = "find";
 
     const commandFunction = await load(commandToSend);
     // console.log("  ...args :", args);
     await commandFunction({
         toPath, cmd: commandToSend, inTargetPath,
-        inFolderName: commandToSend
+        inFolderName: commandToSend, inGenerateRest
     });
 };
 
