@@ -1,4 +1,4 @@
-import { startFunc as Service } from "./service.js";
+import Service from "./service.js";
 import { ConflictError, StorageError } from "./errors.js";
 
 const getFunc = async ({ req, res, inTablePath }) => {
