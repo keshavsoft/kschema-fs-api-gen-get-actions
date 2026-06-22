@@ -28,6 +28,17 @@ const find = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
     });
 };
 
+const filterQuery = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
+    const commandToSend = "filterQuery";
+
+    const commandFunction = await load(commandToSend);
+    // console.log("  ...args :", args);
+    await commandFunction({
+        toPath, cmd: commandToSend, inTargetPath,
+        inFolderName: commandToSend, inGenerateRest
+    });
+};
+
 export {
-    showAll, find
+    showAll, find, filterQuery
 };
