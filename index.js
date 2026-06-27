@@ -6,17 +6,6 @@ const load = async (cmd) => {
     return module.default; // Returns a function
 };
 
-const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
-    const commandToSend = "showAll";
-
-    const commandFunction = await load(commandToSend);
-    // console.log("  ...args :", args);
-    await commandFunction({
-        toPath, cmd: commandToSend, inTargetPath,
-        inFolderName: commandToSend, inGenerateRest
-    });
-};
-
 const find = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
     const commandToSend = "find";
 
@@ -39,6 +28,18 @@ const filterQuery = async ({ toPath, showLog, inTargetPath, inGenerateRest }) =>
     });
 };
 
+const lastRecord = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
+    const commandToSend = "lastRecord";
+
+    const commandFunction = await load(commandToSend);
+    // console.log("  ...args :", args);
+    await commandFunction({
+        toPath, cmd: commandToSend, inTargetPath,
+        inFolderName: commandToSend, inGenerateRest,
+        showLog
+    });
+};
+
 export {
-    showAll, find, filterQuery
+    showAll, find, filterQuery, lastRecord
 };
