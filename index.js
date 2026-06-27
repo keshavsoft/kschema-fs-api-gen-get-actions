@@ -40,7 +40,9 @@ const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
     });
 };
 
-const lastRecord = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => {
+const lastRecord = async ({ toPath, showLog, inTargetPath,
+    inGenerateRest, inPort }) => {
+        
     const commandToSend = "lastRecord";
 
     const commandFunction = await load(commandToSend);
@@ -48,7 +50,7 @@ const lastRecord = async ({ toPath, showLog, inTargetPath, inGenerateRest }) => 
     await commandFunction({
         toPath, cmd: commandToSend, inTargetPath,
         inFolderName: commandToSend, inGenerateRest,
-        showLog
+        showLog, inPort
     });
 };
 

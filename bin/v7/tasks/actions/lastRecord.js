@@ -12,7 +12,7 @@ import { announce } from "./LastRecord/steps/announce.js";
 import resolveFolderName from "./LastRecord/steps/resolveFolderName.js";
 
 const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreate = true,
-    inTargetPath, inGenerateRest = false, inFolderName
+    inTargetPath, inGenerateRest = false, inFolderName, inPort
 }) => {
 
     const localToPath = toPath;
@@ -46,7 +46,7 @@ const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreat
 
         if (inGenerateRest) {
             generateRest({
-                inTargetPath,
+                inTargetPath, inPort,
                 toPath: path.join(localToPath, resolvedFolderName)
             });
         };
