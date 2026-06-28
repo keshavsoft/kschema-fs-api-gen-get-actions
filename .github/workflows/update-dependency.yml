@@ -1,0 +1,37 @@
+name: Update dependency
+
+on:
+  repository_dispatch:
+    types: [dependency-updated]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      - run: npm install express-fix-endpoints-get-js@latest
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add package.json package-lock.json
+
+          git diff --cached --quiet || git commit -m "Update express-fix-endpoints-get-js"
+
+      - name: Push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
