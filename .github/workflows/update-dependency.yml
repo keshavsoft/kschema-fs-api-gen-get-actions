@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -21,16 +22,12 @@ jobs:
 
       - run: npm install express-fix-endpoints-get-js@latest
 
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: Update express-fix-endpoints-get-js
+          title: Update express-fix-endpoints-get-js
+          body: Update express-fix-endpoints-get-js to latest
+          branch: update-express-fix-endpoints-get-js
+          delete-branch: true
 
-          git add package.json package-lock.json
-
-          git diff --cached --quiet || git commit -m "Update express-fix-endpoints-get-js"
-
-      - name: Push changes
-        run: |
-          git pull --rebase origin main
-          git push origin HEAD:main
