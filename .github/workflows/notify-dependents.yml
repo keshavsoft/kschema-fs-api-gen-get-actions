@@ -1,0 +1,22 @@
+name: Notify Dependents
+
+on:
+  workflow_call:
+    secrets:
+      REPO_DISPATCH_TOKEN:
+        required: true
+  workflow_dispatch:
+
+jobs:
+  notify-dependents:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for NPM registry replication
+        run: sleep 15
+      - name: Notify vs-code-ext-express-api-gen-get-actions
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.REPO_DISPATCH_TOKEN }}" \
+            https://api.github.com/repos/keshavsoft/vs-code-ext-express-api-gen-get-actions/dispatches \
+            -d '{"event_type":"dependency-updated"}'

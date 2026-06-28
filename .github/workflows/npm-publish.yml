@@ -39,3 +39,9 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  notify-dependents:
+    needs: publish-npm
+    uses: ./.github/workflows/notify-dependents.yml
+    secrets:
+      REPO_DISPATCH_TOKEN: ${{ secrets.REPO_DISPATCH_TOKEN }}
