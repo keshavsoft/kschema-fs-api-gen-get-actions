@@ -1,8 +1,9 @@
-import { lastRecord } from "../../../index.js";
+import { firstRecord } from "../../../index.js";
 
-lastRecord({
+firstRecord({
     toPath: process.cwd(),
     showLog: true,
     inGenerateRest: true,
-    inPort: 8888
+    inPort: 8888,
+    inFolderName: "fold1"
 });
