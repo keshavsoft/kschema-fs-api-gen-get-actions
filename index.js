@@ -65,6 +65,20 @@ const lastRecord = async ({ toPath, showLog, inTargetPath,
     });
 };
 
+const firstRecord = async ({ toPath, showLog, inTargetPath,
+    inGenerateRest, inPort, inFolderName }) => {
+
+    const commandToSend = inFolderName || "firstRecord";
+
+    const commandFunction = await load(commandToSend);
+    // console.log("  ...args :", args);
+    await commandFunction({
+        toPath, cmd: commandToSend, inTargetPath,
+        inFolderName: commandToSend, inGenerateRest,
+        showLog, inPort
+    });
+};
+
 export {
-    showAll, find, filterQuery, lastRecord
+    showAll, find, filterQuery, lastRecord, firstRecord
 };
