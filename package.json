@@ -1,6 +1,6 @@
 {
   "name": "kschema-fs-api-gen-get-actions",
-  "version": "1.7.18",
+  "version": "1.7.19",
   "description": "start from end points js, generate post methods",
   "keywords": [
     "cli",

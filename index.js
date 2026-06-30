@@ -68,13 +68,13 @@ const lastRecord = async ({ toPath, showLog, inTargetPath,
 const firstRecord = async ({ toPath, showLog, inTargetPath,
     inGenerateRest, inPort, inFolderName }) => {
 
-    const commandToSend = inFolderName || "firstRecord";
+    const commandToSend = "firstRecord";
 
     const commandFunction = await load(commandToSend);
     // console.log("  ...args :", args);
     await commandFunction({
         toPath, cmd: commandToSend, inTargetPath,
-        inFolderName: commandToSend, inGenerateRest,
+        inFolderName: inFolderName, inGenerateRest,
         showLog, inPort
     });
 };
