@@ -10,13 +10,10 @@ import { createFolder } from "../../core/createFolder.js";
 import { announce } from "./distinct/steps/announce.js";
 
 import resolveFolderName from "./distinct/steps/resolveFolderName.js";
-import actions from "./distinct/actions.json" with { type: "json" };
 
 const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreate = true,
     inTargetPath, inGenerateRest = false, inFolderName
 }) => {
-
-    const matched = actions;
 
     const localToPath = toPath;
 
@@ -44,7 +41,7 @@ const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreat
     if (createFolderResponse.KTF) {
         const fromEndPointsJs = await fixEndpointsJs({
             endPointsJsPath: path.join(localToPath, "end-points.js"),
-            inActionName: cmd, inFolderName, inGetType: "withParams",
+            inActionName: cmd, inFolderName, inGetType: "withParamsDynamic",
             inColumnName: "columnName"
         });
 

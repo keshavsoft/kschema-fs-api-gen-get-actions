@@ -79,6 +79,21 @@ const firstRecord = async ({ toPath, showLog, inTargetPath,
     });
 };
 
+const distinct = async ({ toPath, showLog, inTargetPath,
+    inGenerateRest, inPort, inFolderName }) => {
+
+    const commandToSend = "distinct";
+
+    const commandFunction = await load(commandToSend);
+
+    await commandFunction({
+        toPath, cmd: commandToSend, inTargetPath,
+        inFolderName: inFolderName, inGenerateRest,
+        showLog, inPort
+    });
+};
+
 export {
-    showAll, find, filterQuery, lastRecord, firstRecord
+    showAll, find, filterQuery, lastRecord, firstRecord,
+    distinct
 };
