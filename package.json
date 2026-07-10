@@ -10,7 +10,7 @@
     "project-generator"
   ],
   "dependencies": {
-    "express-fix-endpoints-get-js": "^1.4.2",
+    "express-fix-endpoints-get-js": "^1.5.1",
     "kschema-fs-api-gen-rest": "^1.8.2"
   },
   "type": "module",
