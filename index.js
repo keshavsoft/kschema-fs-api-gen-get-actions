@@ -93,7 +93,49 @@ const distinct = async ({ toPath, showLog, inTargetPath,
     });
 };
 
+const count = async ({ toPath, showLog, inTargetPath,
+    inGenerateRest, inPort, inFolderName }) => {
+
+    const commandToSend = "count";
+
+    const commandFunction = await load(commandToSend);
+
+    await commandFunction({
+        toPath, cmd: commandToSend, inTargetPath,
+        inFolderName: inFolderName, inGenerateRest,
+        showLog, inPort
+    });
+};
+
+const min = async ({ toPath, showLog, inTargetPath,
+    inGenerateRest, inPort, inFolderName }) => {
+
+    const commandToSend = "min";
+
+    const commandFunction = await load(commandToSend);
+
+    await commandFunction({
+        toPath, cmd: commandToSend, inTargetPath,
+        inFolderName: inFolderName, inGenerateRest,
+        showLog, inPort
+    });
+};
+
+const max = async ({ toPath, showLog, inTargetPath,
+    inGenerateRest, inPort, inFolderName }) => {
+
+    const commandToSend = "max";
+
+    const commandFunction = await load(commandToSend);
+
+    await commandFunction({
+        toPath, cmd: commandToSend, inTargetPath,
+        inFolderName: inFolderName, inGenerateRest,
+        showLog, inPort
+    });
+};
+
 export {
     showAll, find, filterQuery, lastRecord, firstRecord,
-    distinct
+    distinct, count, min, max
 };
