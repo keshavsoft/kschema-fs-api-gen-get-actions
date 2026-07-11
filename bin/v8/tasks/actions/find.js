@@ -10,14 +10,10 @@ import { createFolder } from "../../core/createFolder.js";
 import { announce } from "./Find/steps/announce.js";
 
 import resolveFolderName from "./Find/steps/resolveFolderName.js";
-import actions from "./Find/actions.json" with { type: "json" };
 
 const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreate = true,
     inTargetPath, inGenerateRest = false, inFolderName
 }) => {
-
-    const matched = actions;
-
     const localToPath = toPath;
 
     const resolvedFolderName = resolveFolderName({
