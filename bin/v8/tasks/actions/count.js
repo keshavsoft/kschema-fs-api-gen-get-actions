@@ -41,7 +41,7 @@ const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreat
     if (createFolderResponse.KTF) {
         const fromEndPointsJs = await fixEndpointsJs({
             endPointsJsPath: path.join(localToPath, "end-points.js"),
-            inActionName: cmd, inFolderName, inGetType: "withParamsDynamic",
+            inActionName: cmd, inFolderName, inGetType: "simple",
             inColumnName: "columnName"
         });
 
