@@ -1,119 +1,111 @@
-# Workspace Dependency & Release Workflow Structure
+# CI/CD Workflows & Dependency Automation Documentation
 
-This document details the dependencies and the automated release orchestration between the three repositories in your workspace:
-1. `express-fix-endpoints-get-js`
-2. `kschema-fs-api-gen-get-actions`
-3. `vs-code-ext-express-api-gen-get-actions`
+This document details the dependencies and the automated release orchestration between the repositories in your workspace:
+1. `express-check-any-for-import`
+2. `express-fix-any-js`
+3. `express-fix-endpoints-get-js`
+4. `kschema-fs-api-gen-get-actions`
 
 ---
 
-## 1. Project Dependency Relationship
+## 🏗️ High-Level Architecture & Propagation Flow
 
-The repositories follow a strict, cascading dependency structure where the VS Code extension depends on the core generator actions, which in turn depends on the endpoint fixer library.
+We have configured a cascading dependency update chain. When a base package is published to NPM, it automatically notifies its immediate downstream dependent, which automatically updates its dependency, commits the changes, and propagates the notification further down the chain.
 
 ```mermaid
 graph TD
-    ext["vs-code-ext-express-api-gen-get-actions<br/><i>VS Code Extension</i>"]
+    A[express-check-any-for-import] -- npm publish --> NPM[npmjs Registry]
+    A -- repository_dispatch --> B[express-fix-any-js]
     
-    gen["kschema-fs-api-gen-get-actions<br/><i>API Generator Actions</i>"]
+    B -- npm install latest check-any --> B
+    B -- npm publish --> NPM
+    B -- repository_dispatch --> C[express-fix-endpoints-get-js]
     
-    rest["kschema-fs-api-gen-rest<br/><i>External Library Dependency</i>"]
+    C -- npm install latest fix-any --> C
+    C -- npm publish --> NPM
+    C -- repository_dispatch --> D[kschema-fs-api-gen-get-actions]
     
-    endpoints["express-fix-endpoints-get-js<br/><i>Endpoint Logic Builder</i>"]
+    D -- npm install latest endpoints-get --> D
+    D -- npm publish --> NPM
+    D -- repository_dispatch --> E[vs-code-ext-express-api-gen-get-actions]
     
-    anyjs["express-fix-any-js<br/><i>External Library Dependency</i>"]
-
-    ext -->|depends on| gen
-    gen -->|depends on| endpoints
-    gen -->|depends on| rest
-    endpoints -->|depends on| anyjs
-```
-
-### Dependency Declarations
-
-*   **[vs-code-ext-express-api-gen-get-actions package.json](../../vs-code-ext-express-api-gen-get-actions/package.json#L52-L54):**
-    ```json
-    "dependencies": {
-      "kschema-fs-api-gen-get-actions": "^1.8.4"
-    }
-    ```
-*   **[kschema-fs-api-gen-get-actions package.json](../package.json#L12-L15):**
-    ```json
-    "dependencies": {
-      "express-fix-endpoints-get-js": "^1.5.5",
-      "kschema-fs-api-gen-rest": "^1.8.2"
-    }
-    ```
-*   **[express-fix-endpoints-get-js package.json](../../express-fix-endpoints-get-js/package.json#L12-L14):**
-    ```json
-    "dependencies": {
-      "express-fix-any-js": "^1.5.3"
-    }
-    ```
-
----
-
-## 2. Automated Cascading Release Chain
-
-When a release is created in an upstream repository, GitHub Actions automatically handles publishing to NPM and triggers downstream updates.
-
-```mermaid
-sequenceDiagram
-    participant EFE as express-fix-endpoints-get-js
-    participant KFS as kschema-fs-api-gen-get-actions
-    participant VSC as vs-code-ext-express-api-gen-get-actions
-
-    Note over EFE: Release Created
-    EFE->>EFE: npm-publish.yml (Publishes to NPM)
-    EFE->>KFS: notify-dependents.yml (Sends repository_dispatch event)
-    
-    Note over KFS: Receives event: dependency-updated
-    KFS->>KFS: update-dependency.yml (Installs latest dependency & bumps version)
-    KFS->>KFS: Automatically creates new GitHub Release
-    KFS->>KFS: npm-publish.yml (Publishes to NPM)
-    KFS->>VSC: notify-dependents.yml (Sends repository_dispatch event)
-    
-    Note over VSC: Receives event: dependency-updated
-    VSC->>VSC: update-dependency.yml (Installs latest dependency, commits and pushes)
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bfb,stroke:#333,stroke-width:2px
+    style D fill:#fbb,stroke:#333,stroke-width:2px
+    style E fill:#ddd,stroke:#333,stroke-width:1px
 ```
 
 ---
 
-## 3. Workflow Details
+## 📦 Detailed Repository & Action Breakdown
 
-### 🟢 1. NPM Publish Workflow (`npm-publish.yml`)
-*   **Files:**
-    *   [express-fix-endpoints-get-js/npm-publish.yml](../../express-fix-endpoints-get-js/.github/workflows/npm-publish.yml)
-    *   [kschema-fs-api-gen-get-actions/npm-publish.yml](../.github/workflows/npm-publish.yml)
-*   **Trigger:** Runs on Github Release creation (`release: types: [created]`).
-*   **Actions:** 
+### 1. `express-check-any-for-import`
+This is the root utility library analyzing JS imports.
+* **[publish-and-notify.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/express-check-any-for-import/.github/workflows/publish-and-notify.yml)** (Caller Workflow)
+  * **Trigger**: Manual dispatch (`workflow_dispatch`) or GitHub Release publication.
+  * **Action**:
     1. Installs dependencies (`npm ci`).
-    2. Publishes to NPM (`npm publish`) using the environment variable `NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}`.
-    3. Triggers the notify-dependents step downstream.
+    2. Runs safety check: Queries NPM registry to check if the current package version already exists. If yes, it skips publishing. If no, it publishes the package to npmjs.
+    3. Triggers `notify-dependents.yml`.
+* **[notify-dependents.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/express-check-any-for-import/.github/workflows/notify-dependents.yml)** (Reusable Callee Workflow)
+  * **Action**: Waits 15 seconds (NPM registry replication delay) and then posts a `dependency-updated` event to `express-fix-any-js`.
 
-### 🔵 2. Notify Dependents Workflow (`notify-dependents.yml`)
-*   **Files:**
-    *   [express-fix-endpoints-get-js/notify-dependents.yml](../../express-fix-endpoints-get-js/.github/workflows/notify-dependents.yml)
-    *   [kschema-fs-api-gen-get-actions/notify-dependents.yml](../.github/workflows/notify-dependents.yml)
-*   **Trigger:** Triggered directly by the NPM Publish workflow after a successful package deployment.
-*   **Actions:**
-    1. Pauses for 15 seconds to allow NPM replication.
-    2. Sends a `POST` request to the target downstream GitHub repository's dispatches endpoint:
-       `https://api.github.com/repos/keshavsoft/<downstream-repo>/dispatches`
-    3. Uses event type `"dependency-updated"`.
-    4. Authenticates with a Personal Access Token / Repo Dispatch Token (`secrets.REPO_DISPATCH_TOKEN`).
+---
 
-### 🟠 3. Update Dependency Workflow (`update-dependency.yml`)
-*   **Files:**
-    *   [kschema-fs-api-gen-get-actions/update-dependency.yml](../.github/workflows/update-dependency.yml)
-    *   [vs-code-ext-express-api-gen-get-actions/update-dependency.yml](../../vs-code-ext-express-api-gen-get-actions/.github/workflows/update-dependency.yml)
-*   **Trigger:** Listens to `repository_dispatch` with event type `[dependency-updated]`.
-*   **Actions:**
-    1. Pulls down code and runs `npm install <upstream-package>@latest`.
-    2. **In `kschema-fs-api-gen-get-actions`:**
-       * Bumps own version (`npm version patch --no-git-tag-version`).
-       * Commits and pushes the change back to the repository.
-       * Creates a new Git tag and pushes it.
-       * Creates a GitHub Release, which automates triggering its own `npm-publish.yml` to loop the sequence to the final downstream extension.
-    3. **In `vs-code-ext-express-api-gen-get-actions`:**
-       * Commits and pushes the update back to the main branch (`git commit -m "Update kschema-fs-api-gen-get-actions to latest"`).
+### 2. `express-fix-any-js`
+This is the CLI tool for applying import alterations.
+* **[update-dependency.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/express-fix-any-js/.github/workflows/update-dependency.yml)**
+  * **Trigger**: Repository dispatch (`dependency-updated`) sent by `express-check-any-for-import`.
+  * **Action**:
+    1. Checks out the repository using `REPO_DISPATCH_TOKEN`.
+    2. Installs latest `express-check-any-for-import` from NPM.
+    3. Bumps its own version patch (e.g. `1.7.4` to `1.7.5`) if any changes were made.
+    4. Commits and pushes the update back to `main`.
+* **[publish-and-notify.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/express-fix-any-js/.github/workflows/publish-and-notify.yml)** (Caller Workflow)
+  * **Trigger**: Manual dispatch (`workflow_dispatch`) or GitHub Release.
+  * **Action**:
+    1. Builds and runs version safety check (skips publishing to NPM if version already exists).
+    2. Calls `notify-dependents.yml` to notify `express-fix-endpoints-get-js`.
+* **[notify-dependents.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/express-fix-any-js/.github/workflows/notify-dependents.yml)** (Reusable Callee Workflow)
+  * **Action**: Waits 15 seconds, then posts `dependency-updated` to `express-fix-endpoints-get-js`.
+
+---
+
+### 3. `express-fix-endpoints-get-js`
+This package handles endpoint-specific generator logic.
+* **[update-dependency.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/express-fix-endpoints-get-js/.github/workflows/update-dependency.yml)**
+  * **Trigger**: Repository dispatch (`dependency-updated`) sent by `express-fix-any-js`.
+  * **Action**:
+    1. Installs latest `express-fix-any-js`.
+    2. Bumps its own version patch if updated.
+    3. Commits and pushes to `main`.
+* **[publish-and-notify.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/express-fix-endpoints-get-js/.github/workflows/publish-and-notify.yml)** (Caller Workflow)
+  * **Trigger**: Manual dispatch or GitHub Release.
+  * **Action**:
+    1. Performs publishing with safety check (skips if already published).
+    2. Calls `notify-dependents.yml` to notify `kschema-fs-api-gen-get-actions`.
+* **[notify-dependents.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/express-fix-endpoints-get-js/.github/workflows/notify-dependents.yml)** (Reusable Callee Workflow)
+  * **Action**: Waits 15 seconds, then posts `dependency-updated` to `kschema-fs-api-gen-get-actions`.
+
+---
+
+### 4. `kschema-fs-api-gen-get-actions`
+This is a generator generating actions.
+* **[update-dependency.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/kschema-fs-api-gen-get-actions/.github/workflows/update-dependency.yml)**
+  * **Trigger**: Repository dispatch (`dependency-updated`) sent by `express-fix-endpoints-get-js`.
+  * **Action**:
+    1. Installs latest `express-fix-endpoints-get-js`.
+    2. Bumps version patch and commits/pushes to `main`.
+* **[publish-and-notify.yml](file:///d:/KeshavSoftRepos/2026-07-14/ks1/kschema-fs-api-gen-get-actions/.github/workflows/publish-and-notify.yml)** (Self-contained Workflow)
+  * **Trigger**: Manual dispatch or GitHub Release.
+  * **Action**:
+    1. Runs NPM version safety checks and publishes to NPM.
+    2. **Directly** waits 15 seconds and notifies `vs-code-ext-express-api-gen-get-actions` via curl, without calling separate/external workflow actions.
+
+---
+
+## 🔒 Required Secret Settings
+For these workflows to function, ensure the following GitHub secrets are set:
+1. **`NPM_TOKEN`**: A Granular or Classic NPM token with write access to publish packages.
+2. **`REPO_DISPATCH_TOKEN`**: A GitHub Personal Access Token (PAT) with `repo` permissions to allow cross-repo workflow triggers and git push permissions.
