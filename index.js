@@ -44,7 +44,7 @@ const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
 
     const commandFunction = await load(commandToSend);
     // console.log("  ...args :", args);
-    await commandFunction({
+    return await commandFunction({
         toPath, cmd: commandToSend, inTargetPath,
         inFolderName: commandToSend, inGenerateRest,
         showLog, inPort
@@ -86,7 +86,7 @@ const distinct = async ({ toPath, showLog, inTargetPath,
 
     const commandFunction = await load(commandToSend);
 
-    await commandFunction({
+    return await commandFunction({
         toPath, cmd: commandToSend, inTargetPath,
         inFolderName: inFolderName, inGenerateRest,
         showLog, inPort
@@ -100,7 +100,7 @@ const count = async ({ toPath, showLog, inTargetPath,
 
     const commandFunction = await load(commandToSend);
 
-    await commandFunction({
+    return await commandFunction({
         toPath, cmd: commandToSend, inTargetPath,
         inFolderName: inFolderName, inGenerateRest,
         showLog, inPort
