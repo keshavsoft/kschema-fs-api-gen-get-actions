@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CI/CD Actions - KSchema Table Action Generator</title>
+    
+    <!-- Google Fonts & Style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="./index.html" class="logo">KSchema<span>.</span></a>
+            <ul class="nav-links">
+                <li><a href="./about.html">About</a></li>
+                <li><a href="./quick-start.html">Quick Start</a></li>
+                <li><a href="./architecture.html">Architecture</a></li>
+                <li><a href="./cicd.html" class="active">CI/CD Actions</a></li>
+                <li><a href="./index.html" class="btn-nav-home">Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1>CI/CD Actions</h1>
+            <p>Automatic dependency propagation chain and publishing workflows.</p>
+        </header>
+
+        <!-- Automated Propagation Chain -->
+        <section>
+            <h2>Cascading Update Pipeline</h2>
+            <p>We use GitHub Actions dispatches to propagate updates downstream instantly whenever a base component changes version:</p>
+            
+            <div class="flow-visualizer" style="max-width: 600px;">
+                <div class="flow-step">express-check-any-for-import publishes to NPM</div>
+                <div class="flow-arrow">↓ dispatch</div>
+                <div class="flow-step">express-fix-any-js pulls latest dependency & bumps version</div>
+                <div class="flow-arrow">↓ dispatch</div>
+                <div class="flow-step">express-fix-endpoints-get-js pulls latest dependency & bumps version</div>
+                <div class="flow-arrow">↓ dispatch</div>
+                <div class="flow-step">kschema-fs-api-gen-get-actions pulls latest dependency & bumps version</div>
+                <div class="flow-arrow">↓ dispatch</div>
+                <div class="flow-step">vs-code-ext-express-api-gen-get-actions pulls latest dependency</div>
+            </div>
+        </section>
+
+        <!-- Version Safety Check -->
+        <section>
+            <h2>NPM Publish Safety Check</h2>
+            <p>To prevent workflows from failing when versions haven't changed, the `npm publish` command dynamically checks the NPM registry first:</p>
+            
+            <div class="code-block">
+                <div class="code-lang">yaml</div>
+                <code>- name: Publish to npm
+  run: |
+    PACKAGE_NAME=$(node -p "require('./package.json').name")
+    PACKAGE_VERSION=$(node -p "require('./package.json').version")
+    if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version >/dev/null 2>&1; then
+      echo "Version ${PACKAGE_VERSION} of ${PACKAGE_NAME} is already published on npm. Skipping publish."
+    else
+      npm publish
+    fi
+  env:
+    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}</code>
+            </div>
+        </section>
+
+        <!-- Action Secrets Settings -->
+        <section>
+            <h2>Required Secrets</h2>
+            <p>To run these workflows successfully, define the following variables under Settings -> Secrets and Variables -> Actions:</p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Secret Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>NPM_TOKEN</strong></td>
+                            <td>An access token from npmjs.org configured with write access to deploy package packages.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>REPO_DISPATCH_TOKEN</strong></td>
+                            <td>A GitHub Personal Access Token (PAT) with `repo` read/write scopes to execute cross-repository dispatch triggers and push version commits back to main branches.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <section style="text-align: center; margin-top: 30px;">
+            <a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions/actions" target="_blank" class="btn-primary">Go to GitHub Actions Tab</a>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Built with ❤️ by KeshavSoft</p>
+            <div class="footer-links">
+                <a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions" target="_blank">GitHub</a>
+                <a href="https://www.npmjs.com/package/@keshavsoft/kschema-api-gen-actions" target="_blank">NPM</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

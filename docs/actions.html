@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CI/CD Actions Portal - KSchema</title>
+    
+    <!-- Google Fonts & Style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="./index.html" class="logo">KSchema<span>.</span></a>
+            <ul class="nav-links">
+                <li><a href="./about.html">About</a></li>
+                <li><a href="./quick-start.html">Quick Start</a></li>
+                <li><a href="./architecture.html">Architecture</a></li>
+                <li><a href="./actions.html" class="active">CI/CD Actions</a></li>
+                <li><a href="./index.html" class="btn-nav-home">Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1>CI/CD Actions</h1>
+            <p>Select a workflow action below to view its detailed documentation, triggers, and safety features.</p>
+        </header>
+
+        <!-- Actions List Grid -->
+        <section>
+            <div class="grid">
+                <a href="./publish-action.html" class="card" style="text-decoration: none; color: inherit; display: block;">
+                    <h3 style="color: var(--primary);">📦 NPM Publish Action</h3>
+                    <p style="color: var(--text-muted); margin-top: 10px; font-size: 0.9rem;">
+                        View details of the publishing workflow (`publish-and-notify.yml`), including the version pre-check mechanism that prevents deployments of duplicate package versions from failing.
+                    </p>
+                </a>
+
+                <a href="./notify-action.html" class="card" style="text-decoration: none; color: inherit; display: block;">
+                    <h3 style="color: var(--accent);">🔔 Notify Dependents Action</h3>
+                    <p style="color: var(--text-muted); margin-top: 10px; font-size: 0.9rem;">
+                        Learn how the webhook-based notification propagation sleeps for NPM CDNs and triggers downstream dispatches to the dependents.
+                    </p>
+                </a>
+
+                <a href="./update-action.html" class="card" style="text-decoration: none; color: inherit; display: block;">
+                    <h3 style="color: #a5f3fc;">🔄 Update Dependency Action</h3>
+                    <p style="color: var(--text-muted); margin-top: 10px; font-size: 0.9rem;">
+                        Inspect the update runner (`update-dependency.yml`), which listens to incoming notifications, bumps versions conditionally, and commits changes.
+                    </p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Secrets Reminder Section -->
+        <section>
+            <h2>Required Workflow Secrets</h2>
+            <p>To authorize cross-repository API requests and deploy builds, configure these secrets in repository settings:</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Secret Key</th>
+                            <th>Target Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>NPM_TOKEN</strong></td>
+                            <td>Authorization token for publishing packages to npmjs.org.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>REPO_DISPATCH_TOKEN</strong></td>
+                            <td>GitHub Personal Access Token (PAT) with repository scopes to push code and trigger downstream dispatches.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Built with ❤️ by KeshavSoft</p>
+            <div class="footer-links">
+                <a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions" target="_blank">GitHub</a>
+                <a href="https://www.npmjs.com/package/@keshavsoft/kschema-api-gen-actions" target="_blank">NPM</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Dependency Action - KSchema Table Action Generator</title>
+    
+    <!-- Google Fonts & Style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="./index.html" class="logo">KSchema<span>.</span></a>
+            <ul class="nav-links">
+                <li><a href="./about.html">About</a></li>
+                <li><a href="./quick-start.html">Quick Start</a></li>
+                <li><a href="./architecture.html">Architecture</a></li>
+                <li><a href="./actions.html">CI/CD Actions</a></li>
+                <li><a href="./index.html" class="btn-nav-home">Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1>Update Dependency Action</h1>
+            <p>Details of the dynamic inbound update workflow (`update-dependency.yml`).</p>
+        </header>
+
+        <!-- Triggers -->
+        <section>
+            <h2>Workflow Trigger</h2>
+            <p>
+                The `update-dependency.yml` workflow listens to `repository_dispatch` events sent from upstream repositories (specifically, <code>express-fix-endpoints-get-js</code>) with the event type <code>dependency-updated</code>:
+            </p>
+            <div class="code-block">
+                <div class="code-lang">yaml</div>
+                <code>on:
+  repository_dispatch:
+    types: [dependency-updated]
+  workflow_dispatch:</code>
+            </div>
+        </section>
+
+        <!-- Dynamic Install and Bump -->
+        <section>
+            <h2>Step 1: Install Latest Upstream Dependency</h2>
+            <p>
+                The action runs npm installation commands to grab the updated upstream dependency package version:
+            </p>
+            <div class="code-block">
+                <div class="code-lang">yaml</div>
+                <code>- run: npm install
+- run: npm install express-fix-endpoints-get-js@latest</code>
+            </div>
+        </section>
+
+        <!-- Version Bump -->
+        <section>
+            <h2>Step 2: Version Patch Increment</h2>
+            <p>
+                If package changes are detected by the update, a patch version is bumped:
+            </p>
+            <div class="code-block">
+                <div class="code-lang">bash</div>
+                <code>git diff --quiet package.json || npm version patch --no-git-tag-version</code>
+            </div>
+            <p>
+                We use <code>--no-git-tag-version</code> to prevent git tag creation from triggering redundant deployment runs.
+            </p>
+        </section>
+
+        <!-- Push back -->
+        <section>
+            <h2>Step 3: Commit and Push Changes</h2>
+            <p>
+                The local updates are pushed back to the main branch using git details of the GitHub Actions Bot:
+            </p>
+            <div class="code-block">
+                <div class="code-lang">bash</div>
+                <code>- name: Commit and push changes
+  run: |
+    git config --global user.name "github-actions[bot]"
+    git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    git add package.json package-lock.json
+    if ! git diff --cached --quiet; then
+      git commit -m "Update express-fix-endpoints-get-js to latest and bump version"
+      git push
+    else
+      echo "No changes to commit"
+    fi</code>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Built with ❤️ by KeshavSoft</p>
+            <div class="footer-links">
+                <a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions" target="_blank">GitHub</a>
+                <a href="https://www.npmjs.com/package/@keshavsoft/kschema-api-gen-actions" target="_blank">NPM</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

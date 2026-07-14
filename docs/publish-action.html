@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NPM Publish Action - KSchema Table Action Generator</title>
+    
+    <!-- Google Fonts & Style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="./index.html" class="logo">KSchema<span>.</span></a>
+            <ul class="nav-links">
+                <li><a href="./about.html">About</a></li>
+                <li><a href="./quick-start.html">Quick Start</a></li>
+                <li><a href="./architecture.html">Architecture</a></li>
+                <li><a href="./actions.html">CI/CD Actions</a></li>
+                <li><a href="./index.html" class="btn-nav-home">Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1>NPM Publish Action</h1>
+            <p>Analysis of the package publishing pipeline and safety-checking mechanisms.</p>
+        </header>
+
+        <!-- Triggers -->
+        <section>
+            <h2>Workflow Triggers</h2>
+            <p>The publishing process in <code>publish-and-notify.yml</code> is triggered by:</p>
+            <ul>
+                <li><strong>Release Publish</strong>: Executed when a release is transitioned to the "published" state (<code>release: types [published]</code>).</li>
+                <li><strong>Manual Run</strong>: Triggered manually via the Actions UI tab (<code>workflow_dispatch</code>).</li>
+            </ul>
+        </section>
+
+        <!-- Safety checks -->
+        <section>
+            <h2>NPM Publish Safety Check</h2>
+            <p>To avoid build failures when attempting to deploy a version that is already registered on the registry, a pre-publish script queries the NPM database first:</p>
+            
+            <div class="code-block">
+                <div class="code-lang">yaml</div>
+                <code>- name: Publish to npm
+  run: |
+    PACKAGE_NAME=$(node -p "require('./package.json').name")
+    PACKAGE_VERSION=$(node -p "require('./package.json').version")
+    if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version >/dev/null 2>&1; then
+      echo "Version ${PACKAGE_VERSION} of ${PACKAGE_NAME} is already published on npm. Skipping publish."
+    else
+      npm publish
+    fi
+  env:
+    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}</code>
+            </div>
+            
+            <h3>Step Breakdown:</h3>
+            <ul>
+                <li><code>PACKAGE_NAME</code> and <code>PACKAGE_VERSION</code> are dynamically retrieved from <code>package.json</code> using Node.js's print execution mode (`node -p`).</li>
+                <li><code>npm view ...</code> checks if the package version is listed on npmjs.org. If yes, it skips the step successfully. If not, it executes `npm publish`.</li>
+            </ul>
+        </section>
+
+        <section style="text-align: center; margin-top: 30px;">
+            <a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions/actions" target="_blank" class="btn-primary">View GitHub Actions</a>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Built with ❤️ by KeshavSoft</p>
+            <div class="footer-links">
+                <a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions" target="_blank">GitHub</a>
+                <a href="https://www.npmjs.com/package/@keshavsoft/kschema-api-gen-actions" target="_blank">NPM</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

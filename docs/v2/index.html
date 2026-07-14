@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KSchema Table Action Generator - Documentation</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-base: #0b0f19;
+            --bg-surface: #151d30;
+            --bg-surface-hover: #1e2942;
+            --primary: #38bdf8;
+            --primary-glow: rgba(56, 189, 248, 0.15);
+            --accent: #10b981;
+            --accent-glow: rgba(16, 185, 129, 0.15);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --glass-bg: rgba(21, 29, 48, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow backgrounds */
+        .ambient-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0) 70%);
+            top: -200px;
+            right: -100px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, rgba(15, 23, 42, 0) 70%);
+            bottom: 20%;
+            left: -200px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn-nav {
+            padding: 8px 16px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            color: var(--primary) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .btn-nav:hover {
+            background: var(--primary);
+            color: var(--bg-base) !important;
+        }
+
+        /* Hero Section */
+        header {
+            position: relative;
+            padding: 160px 0 100px 0;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 99px;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            gap: 6px;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff 30%, #a5f3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 750px;
+            margin: 0 auto 40px auto;
+            font-weight: 400;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: var(--bg-base);
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(56, 189, 248, 0.35);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 28px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        /* Terminal Console */
+        .terminal {
+            max-width: 680px;
+            margin: 0 auto;
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: #111622;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #1c2538;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .terminal-title {
+            margin-left: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-body {
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .terminal-prompt {
+            color: var(--accent);
+            margin-right: 10px;
+            user-select: none;
+        }
+
+        .terminal-line {
+            margin-bottom: 8px;
+        }
+
+        .terminal-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .terminal-output {
+            color: var(--text-muted);
+        }
+
+        /* Section Layouts */
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .section-header {
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .section-header h2 span {
+            color: var(--primary);
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+
+        /* Grid Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.08);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Flow Visualizer */
+        .flow-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            gap: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .flow-step:hover {
+            border-color: var(--primary);
+            background: var(--bg-surface-hover);
+        }
+
+        .flow-step-num {
+            width: 32px;
+            height: 32px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .flow-step-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            user-select: none;
+            line-height: 1;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-lang {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .code-content {
+            color: var(--accent);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: pre;
+        }
+
+        /* Glassmorphic Table */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--bg-surface);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #111624;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        td {
+            font-size: 0.95rem;
+        }
+
+        .badge-method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge-get {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .badge-post {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            background: #090d16;
+            padding: 60px 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-logo {
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+            .nav-links {
+                display: none; /* simple fallback */
+            }
+            footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">KSchema<span>.</span></a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#cicd">CI/CD Actions</a></li>
+                <li><a href="./v1/index.html" class="btn-nav">Legacy v1 Page</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <header>
+        <div class="container">
+            <div class="badge">
+                <span class="badge-dot"></span> Release Version 1.8.11 - Active & Running
+            </div>
+            <h1>KSchema Table Action Generator</h1>
+            <p>
+                A high-performance CLI boilerplate generator designed for Express.js environments.
+                Dynamically parse, scaffolding, and load modular template configurations based on your schemas.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#quick-start" class="btn-primary">Get Started</a>
+                <a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions/actions" target="_blank" class="btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    View GitHub Actions
+                </a>
+            </div>
+
+            <!-- Terminal Mockup -->
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dot dot-red"></div>
+                    <div class="terminal-dot dot-yellow"></div>
+                    <div class="terminal-dot dot-green"></div>
+                    <span class="terminal-title">bash</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>npx @keshavsoft/kschema-api-gen-actions ShowAll
+                    </div>
+                    <div class="terminal-line terminal-output">
+                        🔍 Parsing schemas...
+                    </div>
+                    <div class="terminal-line terminal-output">
+                        ✨ Generating controllers, dal, routes, validation for [ShowAll]
+                    </div>
+                    <div class="terminal-line terminal-output">
+                        🚀 Scaffolding successfully created in ./ShowAll/
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>About <span>This Repository</span></h2>
+                <p>
+                    `kschema-fs-api-gen-get-actions` is a core utility designed to parse configurations, load modular JS templates dynamically, and output production-ready boilerplate code.
+                </p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Performance</h3>
+                    <p>Scaffolds full-stack endpoint routes, validators, data access layers (DALs), and controller maps in milliseconds.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🧩</div>
+                    <h3>Dynamic Architecture</h3>
+                    <p>Configured using `actions.json`. Simply drop in a new module configuration and it is immediately available in the CLI without hardcoding.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔒</div>
+                    <h3>Safe Outputs</h3>
+                    <p>Includes built-in validation checks protecting files from unintended duplication and duplicate imports.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section id="quick-start">
+        <div class="container">
+            <div class="section-header">
+                <h2>Quick <span>Start</span></h2>
+                <p>Run the package globally or trigger it instantly using npx.</p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-lang">bash</div>
+                <div class="code-content">npm install -g @keshavsoft/kschema-api-gen-actions
+
+# Run the dynamic action generator command
+npx @keshavsoft/kschema-api-gen-actions ShowAll</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Flow -->
+    <section id="architecture">
+        <div class="container">
+            <div class="section-header">
+                <h2>Internal <span>Architecture Flow</span></h2>
+                <p>How the JSON-driven dynamic command loading operates inside the CLI core.</p>
+            </div>
+
+            <div class="flow-container">
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="flow-step-num">1</div>
+                        <div class="flow-step-label">CLI Parser parses arguments</div>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">2</div>
+                        <div class="flow-step-label">resolveCommand.js references actions.json</div>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">3</div>
+                        <div class="flow-step-label">loadCommand() runs dynamic import()</div>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">4</div>
+                        <div class="flow-step-label">Scaffolding engine writes templates</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CI/CD Section -->
+    <section id="cicd" style="background: rgba(255,255,255,0.01); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Automated <span>CI/CD Actions</span></h2>
+                <p>Continuous Deployment & automatic dependency updates configured across our cascading repositories.</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3>Auto Publish & Notify</h3>
+                    <p>Whenever a release is published, the workflow automatically publishes to npmjs. Upon success, it dispatches notifications to downstream dependants.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Duplicate Protection</h3>
+                    <p>The publishing action checks if the current package version already exists on NPM before triggering `npm publish`. This ensures workflows don't fail if the package is already updated.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⛓️</div>
+                    <h3>Propagation chain</h3>
+                    <p>Automatically triggers `vs-code-ext-express-api-gen-get-actions` to run its dependency pull, making sure developers always use the latest features.</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions/actions" target="_blank" class="btn-primary">Go to GitHub Actions Tab</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Supported Commands -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2>Supported <span>Commands</span></h2>
+                <p>Default generated Express.js endpoints boilerplate supported by the generator.</p>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command Name</th>
+                            <th>HTTP Method</th>
+                            <th>Scaffolding Template Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ShowAll</strong></td>
+                            <td><span class="badge-method badge-get">GET</span></td>
+                            <td>Generates full controller, dal, route, and validator for fetching all rows in a database table.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Insert</strong></td>
+                            <td><span class="badge-method badge-post">POST</span></td>
+                            <td>Generates table row entry creation handler with data type & validation rules.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Distinct</strong></td>
+                            <td><span class="badge-method badge-get">GET</span></td>
+                            <td>Generates table handler fetching distinct filter values.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <a href="#" class="footer-logo">KSchema<span>.</span></a>
+            <p>Built with ❤️ by KeshavSoft. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="https://github.com/keshavsoft/kschema-fs-api-gen-get-actions" target="_blank">GitHub Repository</a></li>
+                <li><a href="https://www.npmjs.com/package/@keshavsoft/kschema-api-gen-actions" target="_blank">NPM Package</a></li>
+            </ul>
+        </div>
+    </footer>
+
+</body>
+
+</html>
