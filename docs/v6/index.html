@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KSCHEMA-FS-API-GEN-GET-ACTIONS - Setup & Execution Guide</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --container-bg: #ffffff;
+            --text-color: #212529;
+            --primary-color: #007bff;
+            --border-color: #dee2e6;
+            --nav-bg: #fff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: var(--nav-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn.active {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .nav-btn.inactive {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .nav-btn.inactive:hover {
+            background-color: #dee2e6;
+            color: #212529;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--container-bg);
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-top: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 30px;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+
+        code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .highlight-box {
+            background: #e8f4fd;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 0 6px 6px 0;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-btn active">⚙️ How It Works</a>
+            <a href="why-use-this-repo.html" class="nav-btn inactive">💡 Why Use This Repo</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Repository: KSCHEMA-FS-API-GEN-GET-ACTIONS</h1>
+        <p>This repository automates the generation of <strong>GET methods</strong> for API endpoints. The latest
+            version (<code>v6</code>) inside the <code>test</code> folder demonstrates how each GET action works:
+            <code>distinct</code>, <code>find</code>, <code>firstRecord</code>, <code>lastRecord</code>, and
+            <code>showAll</code>.</p>
+
+        <h2>Step-by-Step Execution Guide</h2>
+        <ol>
+            <li><strong>Install Dependencies:</strong>
+                <pre><code>npm install</code></pre>
+            </li>
+            <li><strong>Run a Test Script:</strong> For example, <code>test/v6/ShowAll/test.js</code>:
+                <pre><code>import path from "path";
+import { showAll } from "../../../index.js";
+
+showAll({
+  toPath: process.cwd(),
+  showLog: true,
+  inGenerateRest: true
+});</code></pre>
+            </li>
+            <li><strong>Verify Generated Files:</strong> After execution, new JS files are created that interact with
+                your data layer.</li>
+        </ol>
+
+        <h2>Available GET Methods</h2>
+        <ul>
+            <li><code>distinct</code> → Returns unique values from a dataset.</li>
+            <li><code>find</code> → Retrieves records matching a query.</li>
+            <li><code>firstRecord</code> → Fetches the first record in a dataset.</li>
+            <li><code>lastRecord</code> → Fetches the last record in a dataset.</li>
+            <li><code>showAll</code> → Displays all records, with optional REST generation.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <p><strong>Configuration Note:</strong> Each method accepts parameters like <code>toPath</code>,
+                <code>showLog</code>, and <code>inGenerateRest</code> to control output location, logging, and REST
+                scaffolding.</p>
+        </div>
+    </div>
+
+</body>
+
+</html>
