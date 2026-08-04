@@ -45,7 +45,7 @@ const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
     const commandFunction = await load(commandToSend);
     // console.log("  ...args :", args);
     return await commandFunction({
-        toPath, cmd: commandToSend, inTargetPath,
+        toPath, cmd: "tableGetShowAll", inTargetPath,
         inFolderName: commandToSend, inGenerateRest,
         showLog, inPort
     });

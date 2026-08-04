@@ -1,8 +1,12 @@
 import path from "path";
+import { fileURLToPath } from "url";
+
 import { showAll } from "../../../index.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 showAll({
-    toPath: process.cwd(),
+    toPath: __dirname,
     showLog: true,
     inGenerateRest: true
 });
