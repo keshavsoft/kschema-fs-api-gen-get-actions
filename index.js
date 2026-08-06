@@ -6,20 +6,6 @@ const load = async (cmd) => {
     return module.default; // Returns a function
 };
 
-const find = async ({ toPath, showLog, inTargetPath, inGenerateRest,
-    inPort
-}) => {
-
-    const commandToSend = "find";
-
-    const commandFunction = await load(commandToSend);
-    // console.log("  ...args :", args);
-    await commandFunction({
-        toPath, cmd: commandToSend, inTargetPath,
-        inFolderName: commandToSend, inGenerateRest,
-        inPort
-    });
-};
 
 const filterQuery = async ({ toPath, showLog, inTargetPath, inGenerateRest,
     inPort
@@ -99,6 +85,21 @@ const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
         toPath, cmd: "tableGetShowAll", inTargetPath,
         inFolderName, inGenerateRest,
         showLog, inPort
+    });
+};
+
+const find = async ({ toPath, showLog, inTargetPath, inGenerateRest,
+    inPort, inFolderName
+}) => {
+
+    const commandToSend = "find";
+
+    const commandFunction = await load(commandToSend);
+    // console.log("  ...args :", args);
+    await commandFunction({
+        toPath, cmd: "tableGetShowAll", inTargetPath,
+        inFolderName: inFolderName ? inFolderName : commandToSend, inGenerateRest,
+        inPort
     });
 };
 
