@@ -36,21 +36,6 @@ const filterQuery = async ({ toPath, showLog, inTargetPath, inGenerateRest,
     });
 };
 
-const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
-    inPort
-}) => {
-
-    const commandToSend = "showAll";
-
-    const commandFunction = await load(commandToSend);
-    // console.log("  ...args :", args);
-    return await commandFunction({
-        toPath, cmd: "tableGetShowAll", inTargetPath,
-        inFolderName: commandToSend, inGenerateRest,
-        showLog, inPort
-    });
-};
-
 const lastRecord = async ({ toPath, showLog, inTargetPath,
     inGenerateRest, inPort }) => {
 
@@ -96,13 +81,23 @@ const distinct = async ({ toPath, showLog, inTargetPath,
 const count = async ({ toPath, showLog, inTargetPath,
     inGenerateRest, inPort, inFolderName }) => {
 
-    const commandToSend = "count";
-
-    const commandFunction = await load(commandToSend);
+    const commandFunction = await load("count");
 
     return await commandFunction({
         toPath, cmd: commandToSend, inTargetPath,
-        inFolderName: inFolderName, inGenerateRest,
+        inFolderName, inGenerateRest,
+        showLog, inPort
+    });
+};
+
+const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
+    inPort, inFolderName
+}) => {
+    const commandFunction = await load("showAll");
+    // console.log("  ...args :", args);
+    return await commandFunction({
+        toPath, cmd: "tableGetShowAll", inTargetPath,
+        inFolderName, inGenerateRest,
         showLog, inPort
     });
 };

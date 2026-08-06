@@ -1,7 +1,6 @@
 import path from "path";
 
 import generateRest from "kschema-fs-api-gen-rest";
-// import fixEndpointsJs from "express-fix-endpoints-get-js";
 import fixAnyJs from "express-fix-any-js";
 
 import { locateSource } from "./ShowAll/steps/locateSource.js";
@@ -35,12 +34,6 @@ const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreat
     });
 
     if (createFolderResponse.KTF) {
-        // const fromEndPointsJs = await fixEndpointsJs({
-        //     endPointsJsPath: path.join(localToPath, "end-points.js"),
-        //     inActionName: cmd, inFolderName
-        // });
-
-
         const fromEndPointsJs = fixAnyJs({
             inFileType: cmd,
             inTargetPath: localToPath,
