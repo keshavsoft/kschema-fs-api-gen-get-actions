@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import packageJson from './package.json' with {type: 'json'};
+
 // Helper to load env variables from a .env file if it exists
 function loadEnv() {
   const envPath = path.resolve(process.cwd(), '.env');
@@ -33,7 +35,7 @@ if (!token) {
 
 // Target Repository details
 const owner = 'keshavsoft';
-const repo = 'vs-code-ext-from-any-js';
+const repo = packageJson.name;
 
 console.log(`Target Repository: ${owner}/${repo}`);
 
@@ -63,12 +65,12 @@ async function main() {
   try {
     console.log('🔄 Fetching workflow runs...');
     let runs = await getRuns(1);
-    
+
     if (runs.length === 0) {
       console.log('✅ No workflow runs found to delete.');
       return;
     }
-    
+
     console.log(`🗑️ Found ${runs.length} workflow runs. Deleting...`);
     for (const run of runs) {
       console.log(`Deleting run #${run.id} (${run.name} - ${run.head_branch})...`);
@@ -79,7 +81,7 @@ async function main() {
         console.log(`  ❌ Failed to delete run #${run.id}.`);
       }
     }
-    
+
     // Check if there are more pages
     if (runs.length === 100) {
       console.log('🔄 Checking for next page of runs...');
