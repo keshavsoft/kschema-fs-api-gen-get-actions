@@ -6,6 +6,11 @@ const load = async (cmd) => {
     return module.default; // Returns a function
 };
 
+const loadNew = async () => {
+    const module = await import(`./bin/${getLatestVersion()}/tasks/actions/showAll.js`);
+
+    return module.default; // Returns a function
+};
 
 const filterQuery = async ({ toPath, showLog, inTargetPath, inGenerateRest,
     inPort
@@ -76,7 +81,7 @@ const count = async ({ toPath, showLog, inTargetPath,
     });
 };
 
-const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
+const showAll1 = async ({ toPath, showLog, inTargetPath, inGenerateRest,
     inPort, inFolderName
 }) => {
     const commandFunction = await load("showAll");
@@ -88,14 +93,29 @@ const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
     });
 };
 
+const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
+    inPort, inFolderName
+}) => {
+
+    const commandToSend = "showAll";
+
+    const commandFunction = await loadNew();
+
+    await commandFunction({
+        toPath, cmd: "tableGetShowAll", inTargetPath,
+        inFolderName: inFolderName ? inFolderName : commandToSend, inGenerateRest,
+        inPort
+    });
+};
+
 const find = async ({ toPath, showLog, inTargetPath, inGenerateRest,
     inPort, inFolderName
 }) => {
 
     const commandToSend = "find";
 
-    const commandFunction = await load(commandToSend);
-    // console.log("  ...args :", args);
+    const commandFunction = await loadNew();
+
     await commandFunction({
         toPath, cmd: "tableGetShowAll", inTargetPath,
         inFolderName: inFolderName ? inFolderName : commandToSend, inGenerateRest,

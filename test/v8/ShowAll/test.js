@@ -7,7 +7,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 showAll({
     toPath: __dirname,
-    showLog: true,
     inGenerateRest: true,
     inFolderName: "tab1"
 });
