@@ -1,11 +1,16 @@
-import actions from "../config/actions.json" with { type: "json" };
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default async function resolveCommand(cmd) {
-    const matched = actions.find(x => x.cmd === cmd);
+    const actionsDir = path.join(__dirname, "../tasks/actions");
+    const files = fs.readdirSync(actionsDir);
+    
+    const matchedFile = files.find(f => f.toLowerCase() === `${cmd.toLowerCase()}.js`);
+    if (!matchedFile) return null;
 
-    if (!matched) return null;
-
-    const module = await import(`../tasks/actions/${matched.file}.js`);
-
+    const module = await import(`../tasks/actions/${matchedFile}`);
     return module.default;
 };

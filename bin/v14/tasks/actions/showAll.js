@@ -22,7 +22,16 @@ const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreat
 
     const localToPath = toPath ? toPath : process.cwd();
 
-    const resolvedFolderName = inFolderName;
+    const resolvedFolderName = resolveFolderName({
+        name: inFolderName || cmd || "ShowAll",
+        inDefaultFolderName: "ShowAll"
+    });
+
+    if (resolvedFolderName.KTF === false) {
+        console.log(resolvedFolderName.KReason);
+
+        return;
+    };
 
     const source = locateSource();
     const destination = locateDestination({

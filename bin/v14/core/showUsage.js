@@ -14,7 +14,11 @@ Architecture Goals:
 - Easy scalability
 - Beginner friendly structure
 */
-import actions from "../config/actions.json" with { type: "json" };
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default function showUsage(version) {
   const g = "\x1b[32m";
@@ -23,19 +27,24 @@ export default function showUsage(version) {
   const gray = "\x1b[90m";
   const r = "\x1b[0m";
 
-  const commandsText = actions.map((item) => {
-    return `  ${g}${item.exportFile}${r}     ${item.description}`;
+  const actionsDir = path.join(__dirname, "../tasks/actions");
+  const files = fs.readdirSync(actionsDir)
+    .filter(f => f.endsWith(".js"))
+    .map(f => f.slice(0, -3));
+
+  const commandsText = files.map((name) => {
+    return `  ${g}${name}${r}     Generate ${name} GET action`;
   }).join("\n");
 
-  const examplesText = actions.map((item) => {
-    return `  ${gray}npx @keshavsoft/kschema-api-gen-actions ${item.exportFile}${r}`;
+  const examplesText = files.map((name) => {
+    return `  ${gray}npx kschema-fs-api-gen-get-actions ${name}${r}`;
   }).join("\n");
 
   console.log(`
 ${c}🚀 KSchema Api Generator v${version}${r}
 
 ${y}Usage:${r}
-  ${g}npx @keshavsoft/kschema-api-gen-actions${r} <command> [options]
+  ${g}npx kschema-fs-api-gen-get-actions${r} <command> [options]
 
 ${y}Commands:${r}
 ${commandsText}
@@ -44,6 +53,6 @@ ${y}Examples:${r}
 ${examplesText}
 
 ${y}Tip:${r}
-  ${gray}npm i -g @keshavsoft/kschema-api-gen-actions${r}
+  ${gray}npm i -g kschema-fs-api-gen-get-actions${r}
 `);
 }
