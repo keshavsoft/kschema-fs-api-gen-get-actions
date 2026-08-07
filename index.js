@@ -81,18 +81,6 @@ const count = async ({ toPath, showLog, inTargetPath,
     });
 };
 
-const showAll1 = async ({ toPath, showLog, inTargetPath, inGenerateRest,
-    inPort, inFolderName
-}) => {
-    const commandFunction = await load("showAll");
-    // console.log("  ...args :", args);
-    return await commandFunction({
-        toPath, cmd: "tableGetShowAll", inTargetPath,
-        inFolderName, inGenerateRest,
-        showLog, inPort
-    });
-};
-
 const showAll = async ({ toPath, showLog, inTargetPath, inGenerateRest,
     inPort, inFolderName
 }) => {
