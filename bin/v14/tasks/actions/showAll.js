@@ -18,7 +18,9 @@ const startFunc = async ({ cmd = "", toPath, isAnnounce = true, checkBeforeCreat
 
     const matched = actions;
 
-    const localToPath = toPath;
+    // const localToPath = toPath;
+
+    const localToPath = toPath ? toPath : process.cwd();
 
     const resolvedFolderName = inFolderName;
 
