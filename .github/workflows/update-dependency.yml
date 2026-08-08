@@ -30,7 +30,16 @@ jobs:
 
       - run: npm install
 
-      - run: npm install express-fix-endpoints-get-js@latest
+      - name: Update package
+        run: |
+          PACKAGE_NAME="${{ github.event.client_payload.package }}"
+          if [ -n "$PACKAGE_NAME" ]; then
+            echo "Updating package: $PACKAGE_NAME"
+            npm install ${PACKAGE_NAME}@latest
+          else
+            echo "No package specified, updating default dependency express-fix-endpoints-get-js..."
+            npm install express-fix-endpoints-get-js@latest
+          fi
 
       - name: Bump package version
         run: npm version patch --no-git-tag-version
